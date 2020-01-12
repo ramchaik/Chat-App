@@ -8,5 +8,15 @@
   </head>
   <body>
     Chat App
+    <form id="message-form">
+      <input name="message" placeholder="Message" type="text"> 
+      <button>Send</button>
+    </form>
+    <!-- Client side version of library provided by socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- our client side script -->
+    <script src="js/chat.js"></script>
+
   </body>
 </html>
