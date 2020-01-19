@@ -1,7 +1,7 @@
-const express= require("express");
-const http = require("http");
-const path = require("path");
-const socketio = require("socket.io");
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const socketio = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,16 +12,29 @@ const publicPathDirectory = path.join(__dirname, '../public');
 
 app.use(express.static(publicPathDirectory));
 
-io.on("connection", (socket) => {
-	console.log("new WebSocket connection.")
+io.on('connection', socket => {
+  console.log('new WebSocket connection.');
 
-	socket.emit("message", "Welcome to Chat App!");
+  socket.emit('message', 'Welcome to Chat App!');
 
-	socket.on("sendMessage", (message) => {
-		io.emit("message", message);
-	});
-})
+  socket.broadcast.emit('message', 'A new user joined!');
+
+  socket.on('sendMessage', message => {
+    io.emit('message', message);
+  });
+
+  socket.on('sendLocation', coords => {
+    io.emit(
+      'message',
+      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+    );
+  });
+
+  socket.on('disconnect', () => {
+    io.emit('message', 'A user has left!');
+  });
+});
 
 server.listen(port, () => {
-	console.log(`Server is up on port ${port}!`)
-})
+  console.log(`Server is up on port ${port}!`);
+});
