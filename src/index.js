@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketio = require('socket.io');
+const { generateMessage, generateLocationMessage } = require('./utils/messages');
 const Filters = require('bad-words');
 
 const app = express();
@@ -16,27 +17,27 @@ app.use(express.static(publicPathDirectory));
 io.on('connection', socket => {
   console.log('new WebSocket connection.');
 
-  socket.emit('message', 'Welcome to Chat App!');
+  socket.emit('message', generateMessage('Welcome to Chat App!'));
 
-  socket.broadcast.emit('message', 'A new user joined!');
+  socket.broadcast.emit('message', generateMessage('A new user joined!'));
 
   socket.on('sendMessage', (message, callback) => {
-	const filter = new Filters();
+    const filter = new Filters();
 
-	if (filter.isProfane(message)) {
-		return callback('Profanity is not allowed!');
-	}
+    if (filter.isProfane(message)) {
+      return callback('Profanity is not allowed!');
+    }
 
-	io.emit('message', message);
-	callback();
+    io.emit('message', generateMessage(message));
+    callback();
   });
 
   socket.on('sendLocation', (coords, callback) => {
     io.emit(
-      'message',
-	  `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
-	);
-	callback();
+      'locationMessage',
+      generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+    );
+    callback();
   });
 
   socket.on('disconnect', () => {
