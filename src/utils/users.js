@@ -18,6 +18,7 @@ const addUser = ({ id, username, room }) => {
 		--- Validate username
 		-- Store user	
   */
+ 
   username = username.trim().toLowerCase();
   room = room.trim().toLowerCase();
 
